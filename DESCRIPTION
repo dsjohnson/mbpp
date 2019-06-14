@@ -1,0 +1,17 @@
+Package: mbpp
+Type: Package
+Title: Model-based estimation of northern fur seal pup production
+Version: 0.0.1
+Author: Devin S. Johnson
+Maintainer: Devin S. Johnson <devin.johnson@noaa.gov>
+Description: Impliments methods for model-based estimation of northern fur seal 
+  pup production. 
+Imports: 
+  TMB, 
+  R2jags, 
+  dplyr,
+  magrittr,
+  numDeriv
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
