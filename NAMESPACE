@@ -2,5 +2,7 @@
 
 export(asym_mbpp)
 export(compile_mbpp_tmb)
+export(jags_mbpp)
+import(TMB)
 importFrom(TMB,compile)
 importFrom(numDeriv,grad)

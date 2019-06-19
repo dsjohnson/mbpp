@@ -9,6 +9,7 @@
 #' @param ... additional arguments passed to nlminb() or TMB::MakeADFun()
 #' for optimization
 #' @author Devin S. Johnson
+#' @import TMB
 #' @importFrom numDeriv grad
 #' @export
 
@@ -74,7 +75,7 @@ asym_mbpp <- function(
     return(list(obj=obj, opt=opt))
   } else{
     message("Creating parameter and abundance summaries ...")
-    sdrep <- sdreport(obj,getJointPrecision=TRUE)
+    sdrep <- TMB::sdreport(obj,getJointPrecision=TRUE)
     Cmat <- sdrep$jointPrecision %>% solve()
     summ_sdrep <- summary(sdrep)
     nms <- rownames(summ_sdrep)
@@ -89,7 +90,7 @@ asym_mbpp <- function(
         N = round(summ_sdrep %>% .[(nms=="N_est"),"Estimate"]),
         se_N = round(sqrt(V_miss^2 + E_miss))
       )
-    ## avaialbaility
+    ## availability
     X_a <- data_list$X_a
     v_alpha <- {X_a%*% Cmat[nms_c=="theta_a",nms_c=="theta_a"] %*%t(X_a)} %>%
       diag()
