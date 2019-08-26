@@ -4,7 +4,10 @@
 \alias{compile_mbpp_tmb}
 \title{Compile package TMB function}
 \usage{
-compile_mbpp_tmb()
+compile_mbpp_tmb(model = 1)
+}
+\arguments{
+\item{model}{Details which model to compile}
 }
 \description{
 Compile package TMB function
