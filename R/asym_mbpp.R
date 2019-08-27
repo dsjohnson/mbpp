@@ -58,7 +58,7 @@ asym_mbpp <- function(
   }
   ## Load tmb ddl
   pth <- paste0(system.file(package="mbpp"), "/tmb/")
-  chk <- as.logical(suppressMessages(check_compile()))
+  chk <- as.logical(suppressMessages(mbpp:::check_compile()))
   if(chk){
     message("TMB source code must be compiled...")
     TMB::compile(paste0(pth, "mbpp.cpp"))
@@ -157,6 +157,7 @@ asym_mbpp <- function(
         delta = det_data,
         sigma_delta = sig_d_data,
         xi = xi_data,
+        data_list = data_list,
         fitting = list(obj=obj, opt=opt, par=par, covmat=Cmat)
       )
     )
