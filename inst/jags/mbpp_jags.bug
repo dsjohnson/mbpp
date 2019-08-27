@@ -17,12 +17,12 @@ model{
     D[i] ~ dpois(xi*lambda[i])
     N[i] <- D[i] + M[i] + U[i]
     ### Priors
-    lambda[i] ~ dgamma(1.0E-5, 1.0E-5)
+    lambda[i] ~ dgamma(1.0E-6, 1.0E-6)
     tau[i] ~ dunif(0,1) #dbeta(75,675)
   }
   N_tot = sum(N[])
   xi ~ dunif(0,1)
-        
+
   ### Availability model
   logit_alpha <- X_a %*% theta_a
   for(i in 1:n_ro){
@@ -30,7 +30,7 @@ model{
     Mj[i] ~ dbin(alpha[i], M[r_idx[i]])
     Uj[i] ~ dbin(alpha[i], U[r_idx[i]])
   }
-  
+
   ### Observation model
   logit_delta <- X_d %*% theta_d
   for(i in 1:n){
@@ -38,7 +38,7 @@ model{
     m[i] ~ dbin(delta[i], Mj[ro_idx[i]])
     u[i] ~ dbin(delta[i], Uj[ro_idx[i]])
   }
-  
+
   ### Availability parameters
   for(i in 1:n_a){
     theta_a[i] ~ dnorm(0, tau_a[sig_a_idx[i]])
@@ -47,7 +47,7 @@ model{
     sig_a[i] ~ dexp(1)
     tau_a[i] <- 1/(sig_a[i]*sig_a[i])
   }
-  
+
   ### Detection parameters
   for(i in 1:n_d){
     theta_d[i] ~ dnorm(0, tau_d[sig_d_idx[i]])

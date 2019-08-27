@@ -15,7 +15,7 @@
 
 asym_mbpp <- function(
   det_formula=~rcode*resample*observer,
-  avail_formula=~rcode*resample,
+  avail_formula=~rcode,
   mark_data, resight_data, par, ...){
 
   data_list = list(
@@ -30,17 +30,17 @@ asym_mbpp <- function(
     resight_data$u,
     D=mark_data$deadpups,
     X_a = {
-      X <- model.matrix(avail_mod, resight_data)
+      X <- model.matrix(avail_formula, resight_data)
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
     },
     X_d = {
-      X <- model.matrix(det_mod, resight_data)
+      X <- model.matrix(det_formula, resight_data)
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
     },
-    sig_a_idx = attr(model.matrix(avail_mod, resight_data), "assign") %>% as.integer() %>% {.-min(.)},
-    sig_d_idx = attr(model.matrix(det_mod, resight_data), "assign") %>% as.integer() %>% {.-min(.)} #int
+    sig_a_idx = attr(model.matrix(avail_formula, resight_data), "assign") %>% as.integer() %>% {.-min(.)},
+    sig_d_idx = attr(model.matrix(det_formula, resight_data), "assign") %>% as.integer() %>% {.-min(.)} #int
   )
 
   if(missing(par)){
@@ -57,8 +57,8 @@ asym_mbpp <- function(
     par_list <- par
   }
   ## Load tmb ddl
-  pth <- paste0(path.package("mbpp"), "/tmb/")
-  chk <- as.logical(suppressMessages(mbpp:::check_compile()))
+  pth <- paste0(system.file(package="mbpp"), "/tmb/")
+  chk <- as.logical(suppressMessages(check_compile()))
   if(chk){
     message("TMB source code must be compiled...")
     TMB::compile(paste0(pth, "mbpp.cpp"))

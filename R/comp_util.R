@@ -6,21 +6,13 @@
 #' to compile the source code.
 #' @importFrom TMB compile
 #' @export
-compile_mbpp_tmb <- function(model=1){
+compile_mbpp_tmb <- function(){
   ftmb <- system.file("tmb", "mbpp.cpp", package="mbpp")
-  if(model!=1) ftmb <- system.file("tmb", "mbpp2.cpp", package="mbpp")
   TMB::compile(ftmb)
 }
 
-check_compile <- function(model=1){
-  path <- paste0(path.package("mbpp"), "/tmb/")
-  if(model!=1){
-    fso <- paste0(path, "mbpp2.so")
-    fdll <- paste0(path, "mbpp2.dll")
-  } else{
-    fso <- paste0(path, "mbpp.so")
-    fdll <- paste0(path, "mbpp.dll")
-  }
+check_compile <- function(){
+  path <- paste0(system.file(package="mbpp"), "/tmb/")
   fso <- paste0(path, "mbpp.so")
   fdll <- paste0(path, "mbpp.dll")
   if(file.exists(fso) | file.exists(fdll)){

@@ -10,11 +10,11 @@
 #' n.chains, n.iter, n.burnin, or n.thin
 #' for optimization
 #' @author Devin S. Johnson
-#' @importFrom numDeriv grad
+#' @import dplyr
 #' @export
 
 jags_mbpp <- function(det_formula=~rcode*resample*observer,
-                      avail_formula=~rcode*resample,
+                      avail_formula=~rcode,
                       mark_data, resight_data, par, ...){
   add_args <- list(...)
   data_list = list(
@@ -24,15 +24,16 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
     D=mark_data$deadpups,
     X_a = {
       X <- model.matrix(avail_formula, resight_data)
+      X <- X[duplicated(resight_data %>% select(rcode, resample)),]
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
-    } %>% unique(),
+    },
     X_d = {
       X <- model.matrix(det_formula, resight_data)
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
     },
-    r_idx = resight_data %>% select(rcode, resample) %>% distinct() %>%
+    r_idx = resight_data %>% dplyr::select(rcode, resample) %>% distinct() %>%
       pull(rcode) %>% {as.integer(factor(.))},
     ro_idx = resight_data %>% {paste0(.$rcode,.$resample)} %>% {as.integer(factor(.))},
     sig_a_idx = attr(model.matrix(avail_formula, resight_data), "assign") %>% as.integer() %>% {.-min(.)+1},
@@ -61,7 +62,7 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
     "theta_d", "delta", "sig_a", "sig_d"
   )
 
-  mod_file <- paste0(path.package("mbpp"), "/jags/mbpp_jags.bug")
+  mod_file <- paste0(system.file(package="mbpp"), "/jags/mbpp_jags.bug")
   if(!("n.chains" %in% names(add_args))){
     init_list <- rep(list(init_list), 3)
   } else{
@@ -73,14 +74,14 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
 
   message("Creating parameter and abundance summaries ...")
   ## Abundance
-  N_data <- mark_data %>% select(rcode) %>%
+  N_data <- mark_data %>% dplyr::select(rcode) %>%
     mutate(
       N = round(apply(fit$BUGSoutput$sims.list$N, 2, median)),
       se_N = round(apply(fit$BUGSoutput$sims.list$N, 2, sd))
     )
   ## availability
 
-  avail_data <- resight_data %>% select(rcode, resample) %>%
+  avail_data <- resight_data %>% dplyr::select(rcode, resample) %>%
     distinct() %>%
     mutate(
       alpha=apply(fit$BUGSoutput$sims.list$alpha, 2, median),
@@ -91,7 +92,7 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
     mutate(
       delta=apply(fit$BUGSoutput$sims.list$delta, 2, median),
       se_delta = apply(fit$BUGSoutput$sims.list$delta, 2, sd)
-    ) %>% select(rcode, resample, delta, se_delta)
+    ) %>% dplyr::select(rcode, resample, delta, se_delta)
   ## Sigma_alpha
   rnms <- terms(avail_formula) %>%
   {
@@ -132,10 +133,15 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
       xi = xi_data,
       fitting = list(
         summary=fit$BUGSoutput$summary,
-        mcmc_samples=fit$BUGSoutput$sims.matrix,
+        mcmc_samples=fit$BUGSoutput$sims.list,
         last_values = fit$BUGSoutput$last.values
         )
     )
   )
 
+}
+
+get_mode <- function(x) {
+  d <- density(x)
+  d$x[which.max(d$y)]
 }

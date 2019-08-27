@@ -133,7 +133,7 @@ Type objective_function<Type>::operator() ()
   nll += MVNORM(Cov_u)(res_u);
 
   // xi prior
-  nll -= invlogit(logit_xi) * (1-invlogit(logit_xi));
+  nll -= log(invlogit(logit_xi)) + log(1-invlogit(logit_xi));
 
   for(int i=0; i<n_r; i++){
     // lambda prior
