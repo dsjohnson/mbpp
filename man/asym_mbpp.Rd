@@ -6,7 +6,7 @@
 model for estimation of northern fur seal pup production.}
 \usage{
 asym_mbpp(det_formula = ~rcode * resample * observer,
-  avail_formula = ~rcode * resample, mark_data, resight_data, par, ...)
+  avail_formula = ~rcode, mark_data, resight_data, par, ...)
 }
 \arguments{
 \item{det_formula}{formula for the detection model}
