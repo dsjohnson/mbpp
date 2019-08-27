@@ -85,7 +85,7 @@ asym_mbpp <- function(
     ## Abundance
     V_miss <- summ_sdrep %>% .[(nms=="miss"),"Std. Error"]
     E_miss <- summ_sdrep %>% .[(nms=="miss"),"Estimate"]
-    N_data <- mark_data %>% select(rcode) %>%
+    N_data <- mark_data %>% dplyr::select(rcode) %>%
       mutate(
         N = round(summ_sdrep %>% .[(nms=="N_est"),"Estimate"]),
         se_N = round(sqrt(V_miss^2 + E_miss))
@@ -101,7 +101,7 @@ asym_mbpp <- function(
       mutate(
         alpha=plogis(logit_alpha) %>% as.vector(),
         se_alpha = sqrt(v_alpha)
-      ) %>% select(rcode, resample, alpha, se_alpha) %>%
+      ) %>% dplyr::select(rcode, resample, alpha, se_alpha) %>%
       distinct()
     ## Detection
     X_d <- data_list$X_d
@@ -114,7 +114,7 @@ asym_mbpp <- function(
       mutate(
         delta=plogis(logit_delta) %>% as.vector(),
         se_delta = sqrt(v_delta)
-      ) %>% select(rcode, resample, delta, se_delta)
+      ) %>% dplyr::select(rcode, resample, delta, se_delta)
     ## Sigma_alpha
     rnms <- terms(avail_formula) %>%
     {

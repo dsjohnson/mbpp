@@ -24,7 +24,7 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
     D=mark_data$deadpups,
     X_a = {
       X <- model.matrix(avail_formula, resight_data)
-      X <- X[duplicated(resight_data %>% select(rcode, resample)),]
+      X <- X[duplicated(resight_data %>% dplyr::select(rcode, resample)),]
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
     },
