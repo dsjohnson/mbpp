@@ -72,7 +72,7 @@ asym_mbpp <- function(
   opt <- nlminb(obj$par, obj$fn, obj$gr, ...)
   if(opt$convergence!=0){
     message("Optimization did not converge!")
-    return(list(obj=obj, opt=opt))
+    return(list(obj=obj, opt=opt, data_list=data_list, par_list=par_list))
   } else{
     message("Creating parameter and abundance summaries ...")
     sdrep <- TMB::sdreport(obj,getJointPrecision=TRUE)
