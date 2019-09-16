@@ -34,7 +34,7 @@ library(coda)
 
 ```
 
-```{r, message=FALSE}
+```{r, message=FALSE, results='hide'}
 ### Download model fitting code and compile
 devtools::install_github("dsjohnson/mbpp")
 library(mbpp)

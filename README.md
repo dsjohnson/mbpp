@@ -13,12 +13,8 @@ The package can be installed using the `devtools` package:
 ``` r
 ### Download model fitting code and compile
 devtools::install_github("dsjohnson/mbpp")
-#> Skipping install of 'mbpp' from a github remote, the SHA1 (ba057c9c) has not changed since last install.
-#>   Use `force = TRUE` to force installation
 library(mbpp)
 mbpp::compile_mbpp_tmb()
-#> Note: Using Makevars in /Users/djohnson/.R/Makevars
-#> [1] 0
 ```
 
 The last line is necessary to compile the `TMB` source code. This only
