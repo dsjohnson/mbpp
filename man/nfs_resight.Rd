@@ -4,7 +4,8 @@
 \name{nfs_resight}
 \alias{nfs_resight}
 \title{Northern fur seal mark resight data from 2016}
-\format{A data frame with 76 observations on the following 6 variables.
+\format{
+A data frame with 76 observations on the following 6 variables.
 
 \describe{
 \item{icode}{Island designation}
@@ -18,7 +19,8 @@
 \item{m}{Number of marked pups observed}
 
 \item{u}{Number of unmarked pups observed}
-}}
+}
+}
 \source{
 Marine Mammal Laboratory, Alaska
 Fisheries Science Center, National Marine Fisheries Service, NOAA 7600 Sand

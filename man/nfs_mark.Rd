@@ -4,7 +4,8 @@
 \name{nfs_mark}
 \alias{nfs_mark}
 \title{Northern fur seal shear marking data from 2016}
-\format{A data frame with 19 observations on the following 6 variables.
+\format{
+A data frame with 19 observations on the following 6 variables.
 
 \describe{
 \item{icode}{Island designation}
@@ -18,7 +19,8 @@
 \item{sep}{Estimated standard error using design-based method}
 
 \item{M}{Number of pups shear marked}
-}}
+}
+}
 \source{
 Marine Mammal Laboratory, Alaska
 Fisheries Science Center, National Marine Fisheries Service, NOAA 7600 Sand

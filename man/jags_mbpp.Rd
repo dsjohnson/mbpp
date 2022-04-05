@@ -5,12 +5,16 @@
 \title{Fit asymptotic approximation of hierarchical N-mixture
 model for estimation of northern fur seal pup production.}
 \usage{
-jags_mbpp(det_formula = ~rcode * resample * observer,
-  avail_formula = ~rcode, mark_data, resight_data, par, ...)
+jags_mbpp(
+  dp_formula = ~0 + log(harem_bulls),
+  avail_formula = ~rcode,
+  mark_data,
+  resight_data,
+  par,
+  ...
+)
 }
 \arguments{
-\item{det_formula}{formula for the detection model}
-
 \item{avail_formula}{formula for the avaialbility model}
 
 \item{mark_data}{Data frame providing pups marked and dead pup counts
@@ -23,6 +27,8 @@ for each site}
 \item{...}{additional arguments passed to \link{R2jags::jags} such as
 n.chains, n.iter, n.burnin, or n.thin
 for optimization}
+
+\item{det_formula}{formula for the detection model}
 }
 \description{
 Fit asymptotic approximation of hierarchical N-mixture

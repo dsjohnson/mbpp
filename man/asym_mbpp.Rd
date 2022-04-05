@@ -5,8 +5,14 @@
 \title{Fit asymptotic approximation of hierarchical N-mixture
 model for estimation of northern fur seal pup production.}
 \usage{
-asym_mbpp(det_formula = ~rcode * resample * observer,
-  avail_formula = ~rcode, mark_data, resight_data, par, ...)
+asym_mbpp(
+  det_formula = ~rcode * resample * observer,
+  avail_formula = ~rcode,
+  mark_data,
+  resight_data,
+  par,
+  ...
+)
 }
 \arguments{
 \item{det_formula}{formula for the detection model}

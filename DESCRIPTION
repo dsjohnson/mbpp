@@ -6,6 +6,7 @@ Author: Devin S. Johnson
 Maintainer: Devin S. Johnson <devin.johnson@noaa.gov>
 Description: Impliments methods for model-based estimation of northern fur seal 
   pup production. 
+License: CC0
 Imports: 
   TMB, 
   R2jags, 
@@ -14,4 +15,4 @@ Imports:
   numDeriv
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.2
