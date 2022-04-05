@@ -13,34 +13,33 @@
 #' @import dplyr
 #' @export
 
-jags_mbpp <- function(det_formula=~rcode*resample*observer,
+jags_mbpp <- function(dp_formula=~0+log(harem_bulls),
                       avail_formula=~rcode,
                       mark_data, resight_data, par, ...){
   add_args <- list(...)
   data_list = list(
     M=mark_data$M,
     m=resight_data$m,
-    u=resight_data$u,
+    n=resight_data$n,
     D=mark_data$deadpups,
     X_a = {
       X <- model.matrix(avail_formula, resight_data)
-      X <- X[duplicated(resight_data %>% dplyr::select(rcode, resample)),]
+      idx_avail_occ <- !duplicated(X);
+      X <- X[idx_avail_occ,]
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
     },
     X_d = {
-      X <- model.matrix(det_formula, resight_data)
+      X <- model.matrix(dp_formula, mark_data)
       idx <- !(apply(X,2,var)==0 & apply(X,2,mean)!=1)
       X[,idx]
     },
-    r_idx = resight_data %>% dplyr::select(rcode, resample) %>% distinct() %>%
+    r_idx = resight_data %>% dplyr::select(rcode, resample) %>% #distinct() %>%
       pull(rcode) %>% {as.integer(factor(.))},
     ro_idx = resight_data %>% {paste0(.$rcode,.$resample)} %>% {as.integer(factor(.))},
-    sig_a_idx = attr(model.matrix(avail_formula, resight_data), "assign") %>% as.integer() %>% {.-min(.)+1},
-    sig_d_idx = attr(model.matrix(det_formula, resight_data), "assign") %>% as.integer() %>% {.-min(.)+1} #int
+    sig_a_idx = attr(model.matrix(avail_formula, resight_data), "assign") %>% as.integer() %>% {.-min(.)+1}
   ) %>% {append(., list(
-    n_sig_a = max(.$sig_a_idx),
-    n_sig_d = max(.$sig_d_idx)
+    n_sig_a = max(.$sig_a_idx)
   ))}
 
   if(!missing(par)){
@@ -48,21 +47,20 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
   } else{
     init_list <- list(
       lambda=as.integer(data_list$M/0.1) - data_list$M,
-      xi = 0.03,
       tau = rep(0.10, length(data_list$M)),
       theta_a = c(0.5, rep(0, ncol(data_list$X_a)-1)),
       sig_a = c(1, rep(1, max(data_list$sig_a_idx)-1)),
-      theta_d = c(0, rep(0, ncol(data_list$X_d)-1)),
-      sig_d = c(1,rep(1, max(data_list$sig_d_idx)-1))
+      theta_d = c(0, rep(0, ncol(data_list$X_d)-1))
     )
   }
 
   par_list <- c(
-    "lambda", "xi", "tau", "D", "N", "N_tot", "theta_a", "alpha", "Mj", "Uj",
-    "theta_d", "delta", "sig_a", "sig_d"
+    "lambda", "tau", "D", "N", "N_tot", "theta_a", "alpha", "Mj", "Uj",
+    "theta_d", "sig_a"
   )
 
   mod_file <- paste0(system.file(package="mbpp"), "/jags/mbpp_jags.bug")
+  # mod_file <- paste0(getwd(), "/inst/jags/mbpp_jags_alt.bug")
   if(!("n.chains" %in% names(add_args))){
     init_list <- rep(list(init_list), 3)
   } else{
@@ -71,7 +69,7 @@ jags_mbpp <- function(det_formula=~rcode*resample*observer,
 
   message("Performing MCMC sampling ...")
   fit <- R2jags::jags(data_list, init_list, par_list, mod_file, ...)
-
+  # fit <- R2jags::jags(data_list, init_list, par_list, mod_file)
   message("Creating parameter and abundance summaries ...")
   ## Abundance
   N_data <- mark_data %>% dplyr::select(rcode) %>%

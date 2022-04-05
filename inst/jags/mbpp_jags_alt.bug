@@ -1,0 +1,58 @@
+data{
+  dim_d <- dim(X_d)
+  dim_a <- dim(X_a)
+  nobs <- length(m)
+  n_r <- length(M)
+  n_avail_occ <- dim_a[1]
+  n_a <- dim_a[2]
+  n_d <- dim_d[2]
+}
+
+model{
+
+### Pup production/moratilty/marking model
+  for(i in 1:n_r){
+    M[i] ~ dpois(tau[i]*lambda[i])
+    U[i] ~ dpois((1-tau[i])*lambda[i])
+    D[i] ~ dpois(lambda_d[i])
+    N[i] <- D[i] + M[i] + U[i]
+    ### Priors
+    lambda[i] ~ dgamma(1.0E-6, 1.0E-6)
+    tau[i] ~ dunif(0,1) #dbeta(75,675)
+    lambda_d[i] <- exp(log_lambda_d[i])
+  }
+  N_tot = sum(N[])
+
+  ### Dead pup model
+  log_lambda_d <- X_d %*% theta_d
+
+  ### Availability model
+  logit_alpha <- X_a %*% theta_a
+  for(i in 1:n_avail_occ){
+    logit(alpha[i]) <- logit_alpha[i]
+    Mj[i] ~ dbin(alpha[i], M[r_idx[i]])
+    Uj[i] ~ dbin(alpha[i], U[r_idx[i]])
+    Pj[i] <- Mj[i]/(Mj[i] + Uj[i])
+  }
+
+  ### Observation model
+  for(i in 1:nobs){
+    m[i] ~ dbin(Pj[avail_idx[i]], n[i])
+  }
+
+  ### Availability parameters
+  for(i in 1:n_a){
+    theta_a[i] ~ dnorm(0, tau_a[sig_a_idx[i]])
+  }
+  for(i in 1:n_sig_a){
+    sig_a[i] ~ dexp(1)
+    tau_a[i] <- 1/(sig_a[i]*sig_a[i])
+  }
+  ## Dead pup parameters
+  for(i in 1:n_d){
+    theta_d[i] ~ dnorm(0,100)
+  }
+
+}
+
+
